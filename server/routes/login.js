@@ -1,9 +1,9 @@
 import express from 'express';
 import { db } from "../db/db-supabase.js";
 
-const router = express.Router();
+const loginRouter = express.Router();
 
-router.post('/', async (req, res) => {
+loginRouter.post('/', async (req, res) => {
   const { email, password } = req.body;
   console.log('Request body:', req.body);
 
@@ -47,4 +47,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router;
+export default loginRouter;
