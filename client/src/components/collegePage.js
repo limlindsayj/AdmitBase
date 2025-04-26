@@ -5,8 +5,8 @@ import SearchDropdown from './features/searchDropdown.js';
 import ApplicationCard from './features/applicationCard.js';
 
 function CollegePage() {
-  const [applications, setApplications] = useState([]);             // always full list
-  const [filteredApplications, setFilteredApplications] = useState([]); // shown list
+  const [applications, setApplications] = useState([]);      
+  const [filteredApplications, setFilteredApplications] = useState([]);
   const [majors, setMajors] = useState([]);
   const location = useLocation();
   const school = location.state;
@@ -17,8 +17,8 @@ function CollegePage() {
         const response = await axios.get(`http://localhost:3001/application/school/${school}`);
         const schoolData = response.data[0]?.application || [];
 
-        setApplications(schoolData);             // full list saved
-        setFilteredApplications(schoolData);     // initial view shows all
+        setApplications(schoolData);       
+        setFilteredApplications(schoolData);    
         const majorOptions = [...new Set(schoolData.map(app => app.major))];
         setMajors(majorOptions);
       } catch (error) {
@@ -31,12 +31,10 @@ function CollegePage() {
 
   const handleSearchChange = (filter) => {
     if (filter === "hello" || !filter || filter.trim() === "") {
-      // RESET to full list saved in `applications`
       setFilteredApplications(applications);
       return;
     }
 
-    // FILTER: By major
     const filtered = applications.filter(app => 
       (app.major ?? "").toLowerCase() === filter.toLowerCase()
     );
