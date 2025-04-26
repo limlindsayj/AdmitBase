@@ -2,7 +2,7 @@ import { Box, Input, VStack, Text } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-function SearchDropdown({ choices = [], onSearchChange }) {
+function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false }) {
   const [search, setSearch] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -19,7 +19,9 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
         setSearch('');
-        onSearchChange("hello"); // clicked away reset
+        if (allowResetOnBlur) {
+          onSearchChange("hello"); // 👈 only reset if allowed
+        }
         setIsOpen(false);
       }
     };
@@ -28,19 +30,17 @@ function SearchDropdown({ choices = [], onSearchChange }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onSearchChange]);
+  }, [onSearchChange, allowResetOnBlur]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearch(value);
     setIsOpen(true);
-    // ❌ Do NOT call onSearchChange here anymore
-    // Only update text field, no navigation
   };
 
   const handleChoiceSelect = (choice) => {
     setSearch(choice);
-    onSearchChange(choice); // ✅ Now trigger when choice selected
+    onSearchChange(choice);
     setIsOpen(false);
   };
 
