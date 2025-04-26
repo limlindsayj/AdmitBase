@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { schoolRouter } from "./routes/schools.js";
 
 dotenv.config();
 
@@ -11,6 +12,8 @@ app.use(cors({
     credentials: true
   }));
 app.use(express.json()); // Good to include for parsing JSON requests
+
+app.use("/school", schoolRouter);
 
 app.get('/', (req, res) => {
 res.send('API is running');
