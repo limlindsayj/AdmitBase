@@ -27,6 +27,12 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Incorrect password' });
     }
 
+    res.cookie('session', user.id, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 
+    });
+
     res.json({
       message: 'Login successful!',
       user: {
