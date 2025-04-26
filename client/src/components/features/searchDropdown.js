@@ -2,14 +2,14 @@ import { Box, Input, VStack, Text } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-function SearchDropdown({ choices = [], onSearchChange }) {
+function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false }) {
   const [search, setSearch] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
 
   const filteredChoices = choices.filter((choice) =>
-    choice.toLowerCase().includes(search.toLowerCase())
+    (choice ?? "").toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
@@ -18,6 +18,10 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
+        setSearch('');
+        if (allowResetOnBlur) {
+          onSearchChange("hello"); // 👈 only reset if allowed
+        }
         setIsOpen(false);
       }
     };
@@ -26,20 +30,30 @@ function SearchDropdown({ choices = [], onSearchChange }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [onSearchChange, allowResetOnBlur]);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setIsOpen(true);
+  };
+
+  const handleChoiceSelect = (choice) => {
+    setSearch(choice);
+    onSearchChange(choice);
+    setIsOpen(false);
+  };
 
   return (
-    <VStack p={4} spacing={1}  align="stretch" position="relative">
+    <VStack p={4} spacing={1} align="stretch" position="relative">
       <Input
         width="100%"
         ref={inputRef}
+        value={search}
         placeholder="Search..."
         focusBorderColor="black"
         onFocus={() => setIsOpen(true)}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setIsOpen(true);
-        }}
+        onChange={handleInputChange}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
       />
 
@@ -47,9 +61,9 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         {isOpen && (
           <motion.div
             ref={dropdownRef}
-            initial={{ opacity: 0, y: 10 }} // Start with opacity 0 and slightly down
-            animate={{ opacity: 1, y: 0 }}  // Animate to full opacity and original position
-            exit={{ opacity: 0, y: 10 }}    // Fade out with slight slide
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.3 }}
           >
             <Box
@@ -61,10 +75,9 @@ function SearchDropdown({ choices = [], onSearchChange }) {
               maxHeight="200px"
               overflowY="auto"
               position="absolute"
-              top="100%" // Position it directly below the input field
-              left={0}    // Align with the left side of the input
-              width="100%" // Make it the same width as the input
-              height="auto" // Ensure the height adjusts based on content
+              top="100%"
+              left={0}
+              width="100%"
             >
               {filteredChoices.length > 0 ? (
                 filteredChoices.map((choice, index) => (
@@ -73,11 +86,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
                     p={2}
                     _hover={{ backgroundColor: "gray.100" }}
                     cursor="pointer"
-                    onMouseDown={() => {
-                      setSearch(choice);
-                      onSearchChange(choice);
-                      setIsOpen(false);
-                    }}
+                    onMouseDown={() => handleChoiceSelect(choice)}
                   >
                     {choice}
                   </Box>
