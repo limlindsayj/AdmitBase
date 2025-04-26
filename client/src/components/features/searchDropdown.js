@@ -9,7 +9,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
   const inputRef = useRef(null);
 
   const filteredChoices = choices.filter((choice) =>
-    choice.toLowerCase().includes(search.toLowerCase())
+    (choice ?? "").toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
@@ -18,7 +18,8 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
-        onSearchChange("hello");
+        setSearch('');
+        onSearchChange("hello"); // clicked away reset
         setIsOpen(false);
       }
     };
@@ -27,10 +28,24 @@ function SearchDropdown({ choices = [], onSearchChange }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [onSearchChange]);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setIsOpen(true);
+    // ❌ Do NOT call onSearchChange here anymore
+    // Only update text field, no navigation
+  };
+
+  const handleChoiceSelect = (choice) => {
+    setSearch(choice);
+    onSearchChange(choice); // ✅ Now trigger when choice selected
+    setIsOpen(false);
+  };
 
   return (
-    <VStack p={4} spacing={1}  align="stretch" position="relative">
+    <VStack p={4} spacing={1} align="stretch" position="relative">
       <Input
         width="100%"
         ref={inputRef}
@@ -38,10 +53,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         placeholder="Search..."
         focusBorderColor="black"
         onFocus={() => setIsOpen(true)}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setIsOpen(true);
-        }}
+        onChange={handleInputChange}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
       />
 
@@ -66,7 +78,6 @@ function SearchDropdown({ choices = [], onSearchChange }) {
               top="100%"
               left={0}
               width="100%"
-              height="auto"
             >
               {filteredChoices.length > 0 ? (
                 filteredChoices.map((choice, index) => (
@@ -75,11 +86,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
                     p={2}
                     _hover={{ backgroundColor: "gray.100" }}
                     cursor="pointer"
-                    onMouseDown={() => {
-                      setSearch(choice);
-                      onSearchChange(choice);
-                      setIsOpen(false);
-                    }}
+                    onMouseDown={() => handleChoiceSelect(choice)}
                   >
                     {choice}
                   </Box>
