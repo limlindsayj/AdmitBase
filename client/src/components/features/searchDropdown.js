@@ -29,7 +29,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
   }, []);
 
   return (
-    <VStack p={4} spacing={1} width="300px" align="stretch" position="relative">
+    <VStack p={4} spacing={1}  align="stretch" position="relative">
       <Input
         width="100%"
         ref={inputRef}

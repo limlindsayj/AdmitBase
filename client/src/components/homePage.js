@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import SearchDropdown from "./features/searchDropdown";
+import "../index.css";
 
 function HomePage() {
   const [search, setSearch] = useState('');
@@ -23,16 +24,9 @@ function HomePage() {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      width: '100%',
-    }}>
-      <title>Admit_Base</title>
-      <header>Admit_Base</header>
-      <div width="md" style={{ display: 'flex', justifyContent: 'center' }}>
+    <div id="home-container">
+      <header id="home-title">Admit_Base</header>
+      <div id="searchDropdown-container">
         <SearchDropdown choices={schools} onSearchChange={handleSearchChange} />
       </div>
     </div>

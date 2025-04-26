@@ -1,0 +1,31 @@
+#home-title {
+    color: #000;
+    text-align: center;
+    @font-face {
+        font-family: "SF Pro Text";
+        font-style: normal;
+        font-weight: 700;
+        src: url("https://raw.githubusercontent.com/blaisck/sfwin/master/SFPro/TrueType/SFProText-Bold.ttf");
+    }
+    font-size: 64px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0; /* Corrected: no quotes */
+}
+
+#home-container {
+    display: flex; /* Corrected: no quotes */
+    flex-direction: column; /* Corrected: no quotes */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+#searchDropdown-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
