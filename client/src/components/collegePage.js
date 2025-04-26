@@ -27,6 +27,7 @@ function CollegePage() {
       }
     };
 
+
     fetchApplicationsBySchool();
   }, [school]);
 
@@ -35,6 +36,7 @@ function CollegePage() {
       // Reset to show all majors at the school
       setFilteredApplications(applications);
       return;
+
     }
 
     // Filter majors inside the current school
