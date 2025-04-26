@@ -25,6 +25,7 @@ function SubmitProfilePage() {
     additionalInfo: "",
   });
 
+  const [submitted, setSubmitted] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
   const [resultColor, setResultColor] = useState("green");
 
@@ -36,8 +37,27 @@ function SubmitProfilePage() {
     }));
   };
 
+  const validateFields = () => {
+    return (
+      formData.college.trim() !== "" &&
+      formData.essay.trim() !== "" &&
+      formData.major.trim() !== "" &&
+      formData.gpa.trim() !== "" &&
+      formData.status.trim() !== "" &&
+      formData.admissionYear.trim() !== "" &&
+      formData.classes.trim() !== ""
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!validateFields()) {
+      setResultColor("red");
+      setResultMessage("Please fill out all required fields correctly.");
+      return;
+    }
 
     const payload = {
       ...formData,
@@ -84,7 +104,8 @@ function SubmitProfilePage() {
               {resultMessage}
             </Text>
           )}
-          <FormControl isRequired>
+
+          <FormControl isInvalid={submitted && formData.college.trim() === ""}>
             <FormLabel>College</FormLabel>
             <Input
               type="text"
@@ -92,10 +113,10 @@ function SubmitProfilePage() {
               value={formData.college}
               onChange={handleChange}
             />
+            <FormErrorMessage>College is required.</FormErrorMessage>
           </FormControl>
 
-          {/* Essay */}
-          <FormControl isRequired>
+          <FormControl isInvalid={submitted && formData.essay.trim() === ""}>
             <FormLabel>Essay</FormLabel>
             <Textarea
               name="essay"
@@ -103,10 +124,10 @@ function SubmitProfilePage() {
               value={formData.essay}
               onChange={handleChange}
             />
+            <FormErrorMessage>Essay is required.</FormErrorMessage>
           </FormControl>
 
-          {/* Major */}
-          <FormControl isRequired>
+          <FormControl isInvalid={submitted && formData.major.trim() === ""}>
             <FormLabel>Major</FormLabel>
             <Input
               type="text"
@@ -114,10 +135,10 @@ function SubmitProfilePage() {
               value={formData.major}
               onChange={handleChange}
             />
+            <FormErrorMessage>Major is required.</FormErrorMessage>
           </FormControl>
 
-          {/* GPA */}
-          <FormControl isRequired>
+          <FormControl isInvalid={submitted && formData.gpa.trim() === ""}>
             <FormLabel>GPA</FormLabel>
             <Input
               type="number"
@@ -126,10 +147,10 @@ function SubmitProfilePage() {
               value={formData.gpa}
               onChange={handleChange}
             />
+            <FormErrorMessage>GPA is required.</FormErrorMessage>
           </FormControl>
 
-          {/* Status */}
-          <FormControl isRequired>
+          <FormControl isInvalid={submitted && formData.status.trim() === ""}>
             <FormLabel>Status</FormLabel>
             <Select
               name="status"
@@ -141,10 +162,12 @@ function SubmitProfilePage() {
               <option value="waitlisted">Waitlisted</option>
               <option value="rejected">Rejected</option>
             </Select>
+            <FormErrorMessage>Status is required.</FormErrorMessage>
           </FormControl>
 
-          {/* Admission Year */}
-          <FormControl isRequired>
+          <FormControl
+            isInvalid={submitted && formData.admissionYear.trim() === ""}
+          >
             <FormLabel>Admission Year</FormLabel>
             <Input
               type="number"
@@ -152,10 +175,10 @@ function SubmitProfilePage() {
               value={formData.admissionYear}
               onChange={handleChange}
             />
+            <FormErrorMessage>Admission year is required.</FormErrorMessage>
           </FormControl>
 
-          {/* Classes */}
-          <FormControl isRequired>
+          <FormControl isInvalid={submitted && formData.classes.trim() === ""}>
             <FormLabel>Classes (separate with commas)</FormLabel>
             <Textarea
               name="classes"
@@ -163,9 +186,9 @@ function SubmitProfilePage() {
               value={formData.classes}
               onChange={handleChange}
             />
+            <FormErrorMessage>Classes are required.</FormErrorMessage>
           </FormControl>
 
-          {/* Additional Info */}
           <FormControl>
             <FormLabel>Additional Info</FormLabel>
             <Textarea
