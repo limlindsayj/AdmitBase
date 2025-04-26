@@ -27,7 +27,6 @@ app.use(cookieParser());
 
 app.use("/school", schoolRouter);
 
-app.use('/auth/login', loginRouter);
 app.use('/submit-stats', submitRoute);
 app.use("/application", applicationRouter);
 
