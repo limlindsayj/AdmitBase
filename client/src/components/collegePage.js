@@ -29,14 +29,11 @@ function YourComponent() {
   }, []);
 
   const handleMajorFilter = (filter) => {
-    console.log(filter.length);
     if (filter.length === 0) {
         console.log(applications);
         setFilterMajor(applications);
     } else {
-        console.log("what?");
         const filtered = applications.filter((application) => application.major === filter);
-        console.log(filtered)
         setFilterMajor(filtered);
     }
     
