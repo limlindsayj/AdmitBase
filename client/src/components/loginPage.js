@@ -1,7 +1,39 @@
 import { HStack, VStack, Heading, Box, Input, FormControl, FormErrorMessage, Button, Text, Image } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+
 
 function LoginPage() {
+    const navigate = useNavigate();
+
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        const email = emailRef.current.value;
+        const password = passwordRef.current.value;
+        console.log(email);
+        console.log(password);
+
+        try{
+            const response = await axios.post('http://localhost:3001/login', {email, password}, {withCredentials: true});
+            console.log('login successful: ', response.data);
+            navigate('/');
+        } catch (error){
+            console.error('Login error:', error);
+            if (error.response && error.response.status === 401) {
+                setErrorMessage('Invalid username or password.');
+            } else {
+                setErrorMessage('Something went wrong. Please try again.');
+            }
+        }
+    };
     return (
       <HStack>
         <VStack 
@@ -23,15 +55,18 @@ function LoginPage() {
                 display={"flex"}
                 flexDirection={"column"}
                 alignItems={"center"}
+                as="form"
+                onSubmit={handleLogin}
             >
                 <FormControl
                     marginBottom={"15px"}
                 >
                     <Input 
-                        placeholder="Username"
-                        // type="email"
+                        placeholder="Email"
+                        type="email"
                         size={"lg"}
                         borderRadius={"3"}
+                        ref={emailRef}
                     />
                     <FormErrorMessage></FormErrorMessage>
                 </FormControl>
@@ -43,8 +78,9 @@ function LoginPage() {
                         type="password"
                         size={"lg"}
                         borderRadius={"3"}
+                        ref={passwordRef}
                     />
-                    <FormErrorMessage></FormErrorMessage>
+                    {errorMessage && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
                 </FormControl>
                 <Button
                     width={'100%'}

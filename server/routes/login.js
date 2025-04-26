@@ -1,9 +1,9 @@
 import express from 'express';
 import { db } from "../db/db-supabase.js";
 
-const router = express.Router();
+const loginRouter = express.Router();
 
-router.post('/', async (req, res) => {
+loginRouter.post('/', async (req, res) => {
   const { email, password } = req.body;
   console.log('Request body:', req.body);
 
@@ -27,6 +27,12 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Incorrect password' });
     }
 
+    res.cookie('session', user.id, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 
+    });
+
     res.json({
       message: 'Login successful!',
       user: {
@@ -41,4 +47,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router;
+export default loginRouter;
