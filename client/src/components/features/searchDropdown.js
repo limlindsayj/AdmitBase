@@ -19,7 +19,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
         setSearch('');
-        onSearchChange("hello"); // 👈 Reset trigger
+        onSearchChange("hello"); // clicked away reset
         setIsOpen(false);
       }
     };
@@ -28,18 +28,19 @@ function SearchDropdown({ choices = [], onSearchChange }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onSearchChange]); // add onSearchChange to dependencies for safety
+  }, [onSearchChange]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearch(value);
-    onSearchChange(value);
     setIsOpen(true);
+    // ❌ Do NOT call onSearchChange here anymore
+    // Only update text field, no navigation
   };
 
-  const handleChoiceClick = (choice) => {
+  const handleChoiceSelect = (choice) => {
     setSearch(choice);
-    onSearchChange(choice);
+    onSearchChange(choice); // ✅ Now trigger when choice selected
     setIsOpen(false);
   };
 
@@ -85,7 +86,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
                     p={2}
                     _hover={{ backgroundColor: "gray.100" }}
                     cursor="pointer"
-                    onMouseDown={() => handleChoiceClick(choice)}
+                    onMouseDown={() => handleChoiceSelect(choice)}
                   >
                     {choice}
                   </Box>

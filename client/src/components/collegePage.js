@@ -4,65 +4,51 @@ import axios from 'axios';
 import SearchDropdown from './features/searchDropdown.js';
 import ApplicationCard from './features/applicationCard.js';
 
-function YourComponent() {
+function CollegePage() {
   const [applications, setApplications] = useState([]);
-  const [searchOptions, setSearchOptions] = useState([]);
+  const [filteredApplications, setFilteredApplications] = useState([]);
+  const [majors, setMajors] = useState([]);
   const location = useLocation();
-  const school = location.state;
+  const school = location.state; // school name passed from HomePage
 
   useEffect(() => {
-    const fetchAllApplications = async () => {
+    const fetchApplicationsBySchool = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/application/all');
-        const allApps = response.data;
+        const response = await axios.get(`http://localhost:3001/application/school/${school}`);
+        const schoolData = response.data[0]?.application || [];
 
-        setApplications(allApps);
+        setApplications(schoolData);         // Save all applications for this school
+        setFilteredApplications(schoolData); // Default view shows all
 
-        const majors = allApps.map(app => app.major);
-        const schools = allApps.map(app => app.school);
-        const options = [...new Set([...schools, ...majors])]; // Unique
-        setSearchOptions(options);
+        const majorOptions = [...new Set(schoolData.map(app => app.major))];
+        setMajors(majorOptions);
       } catch (error) {
-        console.error('Failed to fetch all applications:', error);
+        console.error('Failed to fetch school applications:', error);
       }
     };
 
-    fetchAllApplications();
-  }, []);
+    fetchApplicationsBySchool();
+  }, [school]);
 
-  const handleSearchChange = async (filter) => {
+  const handleSearchChange = (filter) => {
     if (!filter || filter.trim() === "" || filter === "hello") {
-      // Reset to show everything
-      try {
-        const response = await axios.get('http://localhost:3001/application/all');
-        setApplications(response.data);
-      } catch (error) {
-        console.error('Failed to refetch all applications:', error);
-      }
+      // Reset to show all majors at the school
+      setFilteredApplications(applications);
       return;
     }
 
-    try {
-      const responseMajor = await axios.get(`http://localhost:3001/application/major/${filter}`);
-      const dataMajor = responseMajor.data;
-
-      if (dataMajor.length > 0) {
-        setApplications(dataMajor);
-      } else {
-        const responseSchool = await axios.get(`http://localhost:3001/application/school/${filter}`);
-        const dataSchool = responseSchool.data[0]?.application || [];
-        setApplications(dataSchool);
-      }
-    } catch (error) {
-      console.error('Failed to fetch filtered applications:', error);
-    }
+    // Filter majors inside the current school
+    const filtered = applications.filter(app => 
+      app.major?.toLowerCase() === filter.toLowerCase()
+    );
+    setFilteredApplications(filtered);
   };
 
   return (
     <div>
-      <SearchDropdown choices={searchOptions} onSearchChange={handleSearchChange} />
-      {applications.length > 0 ? (
-        applications.map((application, index) => (
+      <SearchDropdown choices={majors} onSearchChange={handleSearchChange} />
+      {filteredApplications.length > 0 ? (
+        filteredApplications.map((application, index) => (
           <ApplicationCard key={index} application={application} />
         ))
       ) : (
@@ -72,4 +58,4 @@ function YourComponent() {
   );
 }
 
-export default YourComponent;
+export default CollegePage;
