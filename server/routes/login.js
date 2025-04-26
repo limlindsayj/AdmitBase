@@ -47,4 +47,40 @@ loginRouter.post('/', async (req, res) => {
   }
 });
 
+loginRouter.get('/check-session', async (req, res) => {
+  const sessionId = req.cookies.session;
+  // console.log("sessionId", sessionId);
+
+  if (!sessionId){
+    return res.status(401).json({loggedIn: false});
+  }
+
+  try {
+    const { data: user, error } = await db
+      .from('student')
+      .select('*')
+      .eq('id', sessionId)
+      .single();
+
+      if (error || !user) {
+        return res.status(401).json({ loggedIn: false });
+      }
+
+      res.json({ loggedIn: true, user: { id: user.id, email: user.email } });
+  } catch (err){
+    console.error('Session check error:', err);
+    res.status(500).json({ loggedIn: false, error: err.message });
+  }
+});
+
+loginRouter.post('/logout', (req, res) => {
+  res.clearCookie('session', {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/'
+  });
+
+  res.json({ message: 'Logged out successfully' });
+});
+
 export default loginRouter;
