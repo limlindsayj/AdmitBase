@@ -24,12 +24,17 @@ function ApplicationCard({ application }) {
       }, []);
   return (
     <Card
-      boxShadow="md"
       borderWidth="1px"
-      borderColor="gray.200"
       rounded="md"
-      margin="25px"
+      margin="40px"
+      ml="150px"
+      mr="150px"
       alignItems="center"
+      borderRadius="4px"
+      border="1.5px solid var(--Secondary-9, #F7FAFC)"
+      borderColor="gray.200" // You can map your var(--Secondary-9) to a Chakra color, like gray.200
+      backgroundColor="var(--Secondary-9, #F7FAFC)" // Same for background color
+      boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25)"
     >
       <CardHeader>
         <Heading size="md" mb={1}>
@@ -39,7 +44,7 @@ function ApplicationCard({ application }) {
           {application.essay}
         </Text>
       </CardHeader>
-      <CardBody width="100%" alignItems="center">
+      <CardBody width="100%" alignItems="center" >
         <Flex width="100%" justifyContent="center" gap={4} alignItems="center">
           <Tag
             variant="solid"

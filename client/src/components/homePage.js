@@ -69,6 +69,7 @@ function HomePage() {
         justifyContent={"flex-end"}
         paddingRight={"45px"}
         paddingTop={"16px"}
+        padding="14px 208px"
       >
       {isLoggedIn ? (
         <Button onClick={handleLogout}>Log Out</Button>

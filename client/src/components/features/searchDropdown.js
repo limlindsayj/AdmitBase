@@ -50,6 +50,7 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
         width="100%"
         ref={inputRef}
         value={search}
+        border="1px solid #000"
         placeholder="Search..."
         focusBorderColor="black"
         onFocus={() => setIsOpen(true)}
