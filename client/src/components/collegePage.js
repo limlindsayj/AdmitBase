@@ -1,52 +1,63 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
-import SearchDropdown from "./features/searchDropdown.js" // Make sure this is the correct path and import style
+import SearchDropdown from './features/searchDropdown.js';
 import ApplicationCard from './features/applicationCard.js';
 
-
-function YourComponent() {
+function CollegePage() {
   const [applications, setApplications] = useState([]);
+  const [filteredApplications, setFilteredApplications] = useState([]);
   const [majors, setMajors] = useState([]);
-  const [filterMajor, setFilterMajor] = useState([]);
   const location = useLocation();
-  const school = location.state;
+  const school = location.state; // school name passed from HomePage
 
   useEffect(() => {
-    const fetchMajors = async () => {
+    const fetchApplicationsBySchool = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/application/school/${school}`);
-        setMajors(response.data[0].application.map((student) => student.major));
-        setApplications(response.data[0].application);
-        setFilterMajor(response.data[0].application);
+        const schoolData = response.data[0]?.application || [];
+
+        setApplications(schoolData);         // Save all applications for this school
+        setFilteredApplications(schoolData); // Default view shows all
+
+        const majorOptions = [...new Set(schoolData.map(app => app.major))];
+        setMajors(majorOptions);
       } catch (error) {
-        console.error('Failed to fetch majors:', error);
+        console.error('Failed to fetch school applications:', error);
       }
     };
 
-    fetchMajors();
-  }, []);
 
-  const handleMajorFilter = (filter) => {
-    if (filter.length === 0) {
-        console.log(applications);
-        setFilterMajor(applications);
-    } else {
-        const filtered = applications.filter((application) => application.major === filter);
-        setFilterMajor(filtered);
+    fetchApplicationsBySchool();
+  }, [school]);
+
+  const handleSearchChange = (filter) => {
+    if (!filter || filter.trim() === "" || filter === "hello") {
+      // Reset to show all majors at the school
+      setFilteredApplications(applications);
+      return;
+
     }
-    
-  }
+
+    // Filter majors inside the current school
+    const filtered = applications.filter(app => 
+      app.major?.toLowerCase() === filter.toLowerCase()
+    );
+    setFilteredApplications(filtered);
+  };
 
   return (
     <div>
-      <SearchDropdown choices={majors} onSearchChange={handleMajorFilter}/>
-      {filterMajor.map((application, index) => (
-        <ApplicationCard key={index} application={application}/>
-      ))}
+      <SearchDropdown choices={majors} onSearchChange={handleSearchChange} />
+      {filteredApplications.length > 0 ? (
+        filteredApplications.map((application, index) => (
+          <ApplicationCard key={index} application={application} />
+        ))
+      ) : (
+        <div>No applications found.</div>
+      )}
     </div>
   );
 }
 
-export default YourComponent;
+export default CollegePage;
