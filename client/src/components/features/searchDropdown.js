@@ -18,6 +18,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
+        onSearchChange("hello");
         setIsOpen(false);
       }
     };
@@ -33,6 +34,7 @@ function SearchDropdown({ choices = [], onSearchChange }) {
       <Input
         width="100%"
         ref={inputRef}
+        value={search}
         placeholder="Search..."
         focusBorderColor="black"
         onFocus={() => setIsOpen(true)}
@@ -47,9 +49,9 @@ function SearchDropdown({ choices = [], onSearchChange }) {
         {isOpen && (
           <motion.div
             ref={dropdownRef}
-            initial={{ opacity: 0, y: 10 }} // Start with opacity 0 and slightly down
-            animate={{ opacity: 1, y: 0 }}  // Animate to full opacity and original position
-            exit={{ opacity: 0, y: 10 }}    // Fade out with slight slide
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.3 }}
           >
             <Box
@@ -61,10 +63,10 @@ function SearchDropdown({ choices = [], onSearchChange }) {
               maxHeight="200px"
               overflowY="auto"
               position="absolute"
-              top="100%" // Position it directly below the input field
-              left={0}    // Align with the left side of the input
-              width="100%" // Make it the same width as the input
-              height="auto" // Ensure the height adjusts based on content
+              top="100%"
+              left={0}
+              width="100%"
+              height="auto"
             >
               {filteredChoices.length > 0 ? (
                 filteredChoices.map((choice, index) => (
