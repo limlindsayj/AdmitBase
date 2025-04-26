@@ -4,6 +4,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { schoolRouter } from "./routes/schools.js";
+import { applicationRouter } from "./routes/applications.js";
 import loginRoute from './routes/login.js';
 
 dotenv.config();
@@ -20,11 +21,13 @@ app.use(cors({
 app.use(express.json());
 
 app.use("/school", schoolRouter);
-app.use('/auth/login', loginRoute);
+
+app.use("/application", applicationRouter);
 
 app.get('/', (req, res) => {
     res.send('API is running');
-});
+
+app.use('/auth/login', loginRoute);
 
 app.get('/login', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/public/login.html'));
