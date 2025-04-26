@@ -13,3 +13,7 @@ logs/
 # Ignore build and dist directories
 dist/
 build/
+
+# Ignore package.json and package-lock.json
+package.json
+package-lock.json
