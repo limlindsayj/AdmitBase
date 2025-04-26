@@ -1,14 +1,15 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-function LoginPage() {
+
+function CollegePage() {
     const location = useLocation();
-    const login = location.state;
+    const school = location.state;
     return (
         <div>
-            {login ? "login" : "signin"}
+            {school}
         </div>
     );
 }
 
-export default LoginPage;
+export default CollegePage;
