@@ -7,7 +7,7 @@ schoolRouter.get('/', async (req, res) => {
     try {
         const { data, error } = await db
           .from('school')
-          .select('*');
+          .select('name');
         
         if (error) {
           throw error;
