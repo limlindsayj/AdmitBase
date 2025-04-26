@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import HomePage from './components/homePage.js';
 import LoginPage from './components/loginPage.js';
+import CollegePage from './components/collegePage.js';
 
 function App() {
   return (
@@ -17,8 +18,12 @@ function App() {
           element={<HomePage />}
         />
         <Route
-          path="login"
-          element={<LoginPage />}
+          path="/inpage"
+          element={<LoginPage/>}
+        />
+        <Route
+          path="/college"
+          element={<CollegePage/>}
         />
       </Routes>
     </BrowserRouter>

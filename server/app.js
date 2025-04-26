@@ -26,7 +26,7 @@ app.use("/application", applicationRouter);
 
 app.get('/', (req, res) => {
     res.send('API is running');
-
+});
 app.use('/auth/login', loginRoute);
 
 app.get('/login', (req, res) => {
