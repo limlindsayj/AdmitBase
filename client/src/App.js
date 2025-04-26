@@ -8,6 +8,7 @@ import {
 import HomePage from './components/homePage.js';
 import LoginPage from './components/loginPage.js';
 import CollegePage from './components/collegePage.js';
+
 function App() {
   return (
     <BrowserRouter>
