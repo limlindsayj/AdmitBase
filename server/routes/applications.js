@@ -37,3 +37,16 @@ applicationRouter.get('/major/:major', async (req, res) => {
         res.status(500).send(err.message);
     }
 })
+
+applicationRouter.get('/all', async (req, res) => {
+    try {
+      const { data, error } = await db
+        .from('application')
+        .select('*, student(name, gpa, additional_stats)'); 
+  
+      if (error) throw error;
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
