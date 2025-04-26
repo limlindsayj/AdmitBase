@@ -8,6 +8,7 @@ import { schoolRouter } from "./routes/schools.js";
 import { applicationRouter } from "./routes/applications.js";
 import loginRouter from './routes/login.js';
 import submitRoute from './routes/submit-profile.js';
+import createUserRoute from './routes/create-user.js';
 
 
 dotenv.config();
@@ -29,7 +30,11 @@ app.use("/school", schoolRouter);
 app.use('/auth/login', loginRoute);
 app.use('/submit-stats', submitRoute);
 app.use("/application", applicationRouter);
+
+app.use("/create-user", createUserRoute);
+
 app.use('/login', loginRouter);
+
 
 app.get('/', (req, res) => {
     res.send('API is running');

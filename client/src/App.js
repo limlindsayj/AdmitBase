@@ -7,7 +7,9 @@ import {
 } from "react-router-dom";
 import HomePage from './components/homePage.js';
 import LoginPage from './components/loginPage.js';
+import SignupPage from './components/signupPage.js';
 import CollegePage from './components/collegePage.js';
+
 
 function App() {
   return (
@@ -20,6 +22,10 @@ function App() {
         <Route
           path="/inpage"
           element={<LoginPage/>}
+        />
+        <Route
+          path="/signup"
+          element={<SignupPage/>}
         />
         <Route
           path="/college"

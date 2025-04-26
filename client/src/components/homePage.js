@@ -29,7 +29,7 @@ function HomePage() {
     <>
     <div className="in-buttons">
       <button id="login-button" onClick={() => navigate("/inpage", { state: true })}>Log In</button>
-      <button id="signin-button" onClick={() => navigate("/inpage", { state: false })}>Sign In</button>
+      <button id="signin-button" onClick={() => navigate("/signup", { state: false })}>Sign In</button>
     </div>
     
     <div id="home-container">
