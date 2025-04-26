@@ -73,6 +73,13 @@ function InformationForm() {
   return (
     <Box w="100%">
       <VStack spacing={4}>
+        {hasFormError && (
+          <FormControl isInvalid mt={2}>
+            <FormErrorMessage>
+              Please fill out all required fields.
+            </FormErrorMessage>
+          </FormControl>
+        )}
         <HStack w="100%">
           <FormControl isInvalid={isFirstNameError}>
             <FormLabel>First Name</FormLabel>
@@ -134,14 +141,6 @@ function InformationForm() {
             <FormErrorMessage>Password is required.</FormErrorMessage>
           )}
         </FormControl>
-
-        {hasFormError && (
-          <FormControl isInvalid mt={2}>
-            <FormErrorMessage>
-              Please fill out all required fields.
-            </FormErrorMessage>
-          </FormControl>
-        )}
 
         <Button colorScheme="blue" w="100%" onClick={handleSubmit}>
           Submit
