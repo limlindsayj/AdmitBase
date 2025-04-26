@@ -1,13 +1,21 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
 
-app.use(cors());
+dotenv.config();
+
+const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
+app.use(express.json()); // Good to include for parsing JSON requests
 
 app.get('/', (req, res) => {
-    res.send('Loser')
-})
+res.send('API is running');
+});
 
-app.listen(8080, () => {
-    console.log('server listening on 8080');
+app.listen(3000, () => {
+    console.log('server listening on 3000');
 })
