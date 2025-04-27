@@ -56,8 +56,7 @@ function CollegePage() {
         const response = await axios.get(
           `http://localhost:3001/application/school/${school}`
         );
-        console.log('response', response);
-        const data1 = response.data?.school?.application || [];
+        const data1 = response.data?.applications || [];
 
         const averageGpa =
           data1.reduce((sum, item) => {
@@ -173,19 +172,21 @@ function CollegePage() {
     <Box paddingLeft="40px" paddingRight="40px">
       <Box display="flex" justifyContent="space-between" marginTop="30px">
         <Box display="flex" alignItems="center">
-          <SearchDropdown
-            choices={schools}
-            onSearchChange={handleSchoolSearchChange}
-            allowResetOnBlur={true}
-            borderRadius="4px 0px 0px 4px"
-          />
-          <SearchDropdown
-            choices={majors}
-            onSearchChange={handleMajorSearchChange}
-            allowResetOnBlur={true}
-            value={majorSearch}
-            borderRadius="0px"
-          />
+        <SearchDropdown
+          choices={schools}
+          onSearchChange={handleSchoolSearchChange}
+          allowResetOnBlur={false}   // ❌ DO NOT reset college search on click away
+          borderRadius="4px 0px 0px 4px"
+        />
+
+        <SearchDropdown
+          choices={majors}
+          onSearchChange={handleMajorSearchChange}
+          allowResetOnBlur={true}    // ✅ DO reset major search on click away
+          value={majorSearch}
+          borderRadius="0px"
+        />
+
           <Box position="relative">
             <Button
               backgroundColor="black"
