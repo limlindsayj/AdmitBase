@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 import SearchDropdown from "./features/searchDropdown";
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from "../contexts/hooks/AuthContext";
 import "../index.css";
-import { checkNavigable } from "react-slick/lib/utils/innerSliderUtils";
+// import { checkNavigable } from "react-slick/lib/utils/innerSliderUtils";
 
 function HomePage() {
   const [search, setSearch] = useState('');
   const [schools, setSchools] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuthContext();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -24,28 +25,7 @@ function HomePage() {
   };
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/login/check-session', { withCredentials: true });
-        console.log("response", response.data);
-        if (response.data.loggedIn) {
-          setIsLoggedIn(true);
-        } else {
-          setIsLoggedIn(false);
-        }
-      } catch (err) {
-        if (err.response && err.response.status === 401) {
-          setIsLoggedIn(false);
-        }
-        console.error('Session check error:', err);
-      }
-    }
-
-    checkSession();
-  }, []);
-
-  useEffect(() => {
-    axios.get('http://localhost:3001/school/')
+    axios.get('http://localhost:3001/school')
       .then((response) => {
         setSchools(response.data.map((university) => university.name));
       })
@@ -75,7 +55,7 @@ function HomePage() {
       ) : (
         <Box>
           <Button 
-            onClick={() => navigate("/inpage", {state: true})}
+            onClick={() => navigate("/login-page", {state: true})}
             margin={"4px"}
             borderRadius={"4px"}
             border={"1px"}
@@ -84,13 +64,13 @@ function HomePage() {
           >Log In
           </Button>
           <Button 
-            onClick={() => navigate("/inpage", {state: false})}
+            onClick={() => navigate("/signup-page", {state: false})}
             margin={"4px"}
             borderRadius={"4px"}
             backgroundColor={"black"}
             color={"white"}
           >
-            Sign In
+            Sign Up
             </Button>
           </Box>
       )}

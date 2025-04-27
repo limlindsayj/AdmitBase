@@ -3,6 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../contexts/hooks/AuthContext";  // <-- add this
+
 
 
 
@@ -12,6 +14,8 @@ function LoginPage() {
     const emailRef = useRef();
     const passwordRef = useRef();
     const [errorMessage, setErrorMessage] = useState('');
+    const { setIsLoggedIn } = useAuthContext();
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,6 +28,7 @@ function LoginPage() {
         try{
             const response = await axios.post('http://localhost:3001/login', {email, password}, {withCredentials: true});
             console.log('login successful: ', response.data);
+            setIsLoggedIn(true);
             navigate('/');
         } catch (error){
             console.error('Login error:', error);
