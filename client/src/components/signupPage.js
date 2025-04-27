@@ -20,15 +20,37 @@ import { useNavigate } from "react-router-dom";
 function SignupPage() {
   return (
     <HStack>
-      <VStack>
+      <VStack
+        width={"50%"}
+        height={"100vh"}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"start"}
+        justifyContent={"space-evenly"}
+        padding={"5%"}
+      >
         <Box>
-          <Heading>Welcome to Admit Base</Heading>
+          <Heading fontSize={"50px"} fontWeight={"700"} >Welcome to</Heading>
+          <Heading fontSize={"50px"} fontWeight={"700"} fontStyle={"italic"}>Admit_Base!</Heading>
         </Box>
-        <Box>
+        <Box 
+          width={"100%"}
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+        >
           <InformationForm />
         </Box>
+        <Box></Box>
       </VStack>
-      <VStack>images</VStack>
+      <Box
+            backgroundImage="url('/images/universities.png')"
+            backgroundSize="cover"
+            backgroundPosition="center"
+            backgroundRepeat="no-repeat"
+            width="50%"
+            height="100vh"
+        />
     </HStack>
   );
 }
@@ -73,18 +95,13 @@ function InformationForm() {
   return (
     <Box w="100%">
       <VStack spacing={4}>
-        {hasFormError && (
-          <FormControl isInvalid mt={2}>
-            <FormErrorMessage>
-              Please fill out all required fields.
-            </FormErrorMessage>
-          </FormControl>
-        )}
         <HStack w="100%">
           <FormControl isInvalid={isFirstNameError}>
-            <FormLabel>First Name</FormLabel>
             <Input
               type="text"
+              placeholder="First Name"
+              borderRadius={"3"}
+              size="lg"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
@@ -94,9 +111,11 @@ function InformationForm() {
           </FormControl>
 
           <FormControl isInvalid={isLastNameError}>
-            <FormLabel>Last Name</FormLabel>
             <Input
               type="text"
+              placeholder="Last Name"
+              borderRadius={"3"}
+              size="lg"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
@@ -107,9 +126,11 @@ function InformationForm() {
         </HStack>
 
         <FormControl isInvalid={isEmailError}>
-          <FormLabel>Email</FormLabel>
           <Input
             type="email"
+            placeholder="Email"
+            borderRadius={"3"}
+            size="lg"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -119,10 +140,12 @@ function InformationForm() {
         </FormControl>
 
         <FormControl isInvalid={isPasswordError}>
-          <FormLabel>Password</FormLabel>
           <InputGroup>
             <Input
               type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              size="lg"
+              borderRadius={"3"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -130,7 +153,7 @@ function InformationForm() {
               <IconButton
                 variant="ghost"
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                icon={showPassword ? <ViewOffIcon fontSize={"25px"} marginTop={"8px"} marginRight={"10px"}/> : <ViewIcon fontSize={"25px"} marginTop={"8px"} marginRight={"10px"}/>}
                 onClick={() => setShowPassword(!showPassword)}
                 _hover={{ bg: "transparent" }}
                 _focus={{ boxShadow: "none" }}
@@ -142,7 +165,13 @@ function InformationForm() {
           )}
         </FormControl>
 
-        <Button colorScheme="blue" w="100%" onClick={handleSubmit}>
+        <Button 
+            width={'100%'}
+            type="submit"
+            color={"white"}
+            backgroundColor={"black"}
+            borderRadius={"3"}
+            onClick={handleSubmit}>
           Submit
         </Button>
       </VStack>

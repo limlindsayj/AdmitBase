@@ -47,13 +47,12 @@ function LoginPage() {
             display={"flex"}
             flexDirection={"column"}
             alignItems={"start"}
-            justifyContent={"space-between"}
+            justifyContent={"space-evenly"}
             padding={"5%"}
         >
-            <Box 
-                width={"50%"}
-            >
-                <Heading fontFamily={"inter"}>Welcome to Admit_Base!</Heading>
+            <Box >
+                <Heading fontSize={"50px"} fontWeight={"700"} >Welcome to</Heading>
+                <Heading fontSize={"50px"} fontWeight={"700"} fontStyle={"italic"}>Admit_Base!</Heading>
             </Box>
             <Box
                 width={"100%"}
@@ -109,9 +108,14 @@ function LoginPage() {
             </Box>
             <Box></Box>
         </VStack>
-        <VStack>
-            <Image src={"/images/universities.png"} />
-        </VStack>
+        <Box
+            backgroundImage="url('/images/universities.png')"
+            backgroundSize="cover"
+            backgroundPosition="center"
+            backgroundRepeat="no-repeat"
+            width="50%"
+            height="100vh"
+        />
       </HStack>
     )
   }
