@@ -41,60 +41,24 @@ function HomePage() {
   };
 
   return (
-    <Box>
-      <Box
-        width={"100%"}
-        height={"10vh"}
-        display={"flex"}
-        justifyContent={"flex-end"}
-        paddingRight={"45px"}
-        paddingTop={"16px"}
-        padding="14px 208px"
+    <Box
+      width={"100%"}
+      height={"90vh"}
+      display={"flex"}
+      flexDirection={"column"}
+      justifyContent={"center"}
+      alignItems={"center"}
+    >
+      <Heading
+        fontFamily={"SF Pro Text"}
+        fontStyle={"italic"}
+        fontSize={"64px"}
+        fontWeight={"normal"}
+        margin={"22px"}
       >
-      {isLoggedIn ? (
-        <Button onClick={handleLogout}>Log Out</Button>
-      ) : (
-        <Box>
-          <Button 
-            onClick={() => navigate("/login-page", {state: true})}
-            margin={"4px"}
-            borderRadius={"4px"}
-            border={"1px"}
-            backgroundColor={"white"}
-            color={"black"}
-          >Log In
-          </Button>
-          <Button 
-            onClick={() => navigate("/signup-page", {state: false})}
-            margin={"4px"}
-            borderRadius={"4px"}
-            backgroundColor={"black"}
-            color={"white"}
-          >
-            Sign Up
-            </Button>
-          </Box>
-      )}
-      </Box>
-      <Box
-        width={"100%"}
-        height={"90vh"}
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Heading
-          fontFamily={"SF Pro Text"}
-          fontStyle={"italic"}
-          fontSize={"64px"}
-          fontWeight={"normal"}
-          margin={"22px"}
-        >
-          Admit_Base
-        </Heading>
-        <SearchDropdown choices={schools} onSearchChange={handleSearchChange} />
-      </Box>
+        Admit_Base
+      </Heading>
+      <SearchDropdown choices={schools} onSearchChange={handleSearchChange} />
     </Box>
   );
 }
