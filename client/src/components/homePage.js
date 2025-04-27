@@ -12,6 +12,24 @@ function HomePage() {
   const [schools, setSchools] = useState([]);
   const navigate = useNavigate();
 
+  const fullText = "Admit_Base";
+  const [typedText, setTypedText] = useState('');
+
+  useEffect(() => {
+    let index = 0;
+    const speed = 100;
+
+    const intervalId = setInterval(() => {
+      index++;
+      setTypedText(fullText.slice(0, index));
+      if (index === fullText.length) {
+        clearInterval(intervalId);
+      }
+    }, speed);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   useEffect(() => {
     axios.get('http://localhost:3001/school')
       .then((response) => {
@@ -106,7 +124,8 @@ function HomePage() {
           fontWeight={"normal"}
           margin={"22px"}
         >
-          Admit_Base
+          {typedText}
+          <Box as="span" animation="blinking 1s infinite">_</Box>
         </Heading>
         <SearchDropdown choices={schools} onSearchChange={handleSearchChange} />
       </Box>
