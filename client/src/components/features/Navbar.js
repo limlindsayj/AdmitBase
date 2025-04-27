@@ -1,4 +1,4 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import axios from 'axios';
 import { useAuthContext } from "../../contexts/hooks/AuthContext";
 import { useNavigate, Link } from 'react-router-dom';
@@ -38,8 +38,19 @@ function Navbar() {
             </Link>
             {isLoggedIn ? (
                 <Box display="flex" alignItems="center" gap="12px">
-                    <Button onClick={handleLogout}>Log Out</Button>
-                    <FaCircleUser fontSize="30px" />
+                    <Menu>
+                    <MenuButton
+                        as={Box}
+                        cursor="pointer"
+                    >
+                        <FaCircleUser fontSize="30px" />
+                    </MenuButton>
+                        <MenuList border={"2px solid #000"}>
+                            <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                        </MenuList>
+                    </Menu>
+                    {/* <Button onClick={handleLogout}>Log Out</Button>
+                    <FaCircleUser fontSize="30px" /> */}
                 </Box>
                 ) : (
                 <Box>
