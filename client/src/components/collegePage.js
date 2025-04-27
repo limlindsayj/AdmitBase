@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Heading, Button, Image, Input, VStack, Text } from "@chakra-ui/react";
+import { Box, Heading, Button, Image, Input, VStack, Text, Spinner } from "@chakra-ui/react";
 import axios from "axios";
 import SearchDropdown from "./features/searchDropdown.js";
 import ApplicationCard from "./features/applicationCard.js";
@@ -401,7 +401,21 @@ function CollegePage() {
         </Box>
 
         {isLoading ? (
-          <div>Loading...</div>
+          <Box
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            flexDirection={"column"}
+          >
+            <Spinner
+              thickness='4px'
+              speed='0.65s'
+              emptyColor='gray.100'
+              color='black'
+              size='xl'
+              margin = '20px'
+            />
+          </Box>
         ) : filteredApplications.length === 0 ? (
           <Box
             margin="30px"
