@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
 
-function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur, borderRadius = "4px" }) {
+function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur = false, borderRadius = "4px" }) {
   const [search, setSearch] = useState(value || '');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -23,7 +23,10 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
-        setSearch(''); 
+        if (allowResetOnBlur) {
+          if (onSearchChange) onSearchChange('');
+          setSearch('');
+        }
         setIsOpen(false);
       }
     };
@@ -32,7 +35,7 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [allowResetOnBlur, onSearchChange]);
 
   const handleInputChange = (e) => {
     const newValue = e.target.value;
@@ -65,7 +68,6 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
           focusBorderColor="black"
           onFocus={() => setIsOpen(true)}
           onChange={handleInputChange}
-          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
         />
       </InputGroup>
 
