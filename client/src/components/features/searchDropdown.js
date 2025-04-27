@@ -36,9 +36,6 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur 
 
   const handleInputChange = (e) => {
     const newValue = e.target.value;
-    if (onSearchChange) {
-      onSearchChange(newValue);
-    }
     setSearch(newValue);
     setIsOpen(true);
   };
