@@ -74,7 +74,7 @@ function ApplicationCard({ application }) {
             fontSize="14px"
             fontWeight="700"
           >
-            <strong>GPA:</strong> {application.student?.gpa ?? "N/A"}
+            <strong>GPA:&nbsp;</strong> {application.student?.gpa ?? "N/A"}
           </Tag>
 
           <Tag

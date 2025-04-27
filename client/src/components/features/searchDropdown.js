@@ -1,16 +1,15 @@
-import { Box, Input, InputGroup, InputLeftElement, VStack, Text } from "@chakra-ui/react";
+import { Box, Input, VStack, Text } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SearchIcon } from "@chakra-ui/icons";
 
-function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false }) {
+function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur }) {
   const [search, setSearch] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
 
   const filteredChoices = choices.filter((choice) =>
-    (choice ?? "").toLowerCase().includes(search.toLowerCase())
+    (choice ?? "").toLowerCase().includes((value ?? search).toLowerCase())
   );
 
   useEffect(() => {
@@ -19,9 +18,11 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
-        setSearch('');
-        if (allowResetOnBlur && search.trim() === '') {
-          onSearchChange('');
+        if (allowResetOnBlur) {
+          setSearch('');
+          if (onSearchChange) {
+            onSearchChange('');  // Reset when clicking outside
+          }
         }
         setIsOpen(false);
       }
@@ -31,44 +32,37 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onSearchChange, allowResetOnBlur, search]);
+  }, [allowResetOnBlur, onSearchChange]);
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearch(value);
+    const newValue = e.target.value;
+    if (onSearchChange) {
+      onSearchChange(newValue);
+    }
+    setSearch(newValue);
     setIsOpen(true);
   };
 
   const handleChoiceSelect = (choice) => {
+    if (onSearchChange) {
+      onSearchChange(choice);
+    }
     setSearch(choice);
-    onSearchChange(choice);
     setIsOpen(false);
   };
 
   return (
     <VStack spacing={1} align="stretch" position="relative">
-      <InputGroup>
-      <InputLeftElement pointerEvents="none">
-        <SearchIcon color="gray.500" />
-      </InputLeftElement>
-        <Input
-          width="100%"
-          ref={inputRef}
-          value={search}
-          border="1px solid #000"
-          borderRadius={"2px"}
-          placeholder="Search..."
-          focusBorderColor="black"
-          onFocus={() => setIsOpen(true)}
-          onChange={handleInputChange}
-          onBlur={() => {
-            if (allowResetOnBlur && search.trim() === '') {
-              onSearchChange('');
-            }
-            setTimeout(() => setIsOpen(false), 200)
-          }}
-        />
-      </InputGroup>
+      <Input
+        width="100%"
+        ref={inputRef}
+        value={value ?? search}
+        placeholder="Search..."
+        focusBorderColor="black"
+        onFocus={() => setIsOpen(true)}
+        onChange={handleInputChange}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+      />
 
       <AnimatePresence>
         {isOpen && (
