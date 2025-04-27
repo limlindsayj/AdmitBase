@@ -14,27 +14,36 @@ async function summarizeEssay(essay) {
 
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
-    contents: [{ role: "user", parts: [{ text: `Only give the five keywords in a sentence:\n${essay}` }] }],
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `ONLY give the five keywords in a sentence; if it doesn't make sense, create ONLY the five words that might be associated with it (do not be logical):\n${essay}`,
+          },
+        ],
+      },
+    ],
   });
 
   return response?.text || "No summary generated.";
 }
 
-applicationRouter.get('/school/:school', async (req, res) => {
+applicationRouter.get("/school/:school", async (req, res) => {
   try {
     const { school } = req.params;
 
     const { data, error } = await db
-      .from('school')
-      .select('application(*, student(name, gpa, additional_stats))')
-      .ilike('name', school);
+      .from("school")
+      .select("application(*, student(name, gpa, additional_stats))")
+      .ilike("name", school);
 
     if (error) {
       throw error;
     }
 
     if (!data || data.length === 0) {
-      return res.status(404).send('No school found.');
+      return res.status(404).send("No school found.");
     }
 
     const applications = data[0]?.application || [];
@@ -49,29 +58,28 @@ applicationRouter.get('/school/:school', async (req, res) => {
 
     res.status(200).json({
       school: data[0],
-      applications: summaries
+      applications: summaries,
     });
-
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
-applicationRouter.get('/major/:major', async (req, res) => {
+applicationRouter.get("/major/:major", async (req, res) => {
   try {
     const { major } = req.params;
 
     const { data, error } = await db
-      .from('application')
-      .select('*, student(name, gpa, additional_stats)')
-      .ilike('major', major);
+      .from("application")
+      .select("*, student(name, gpa, additional_stats)")
+      .ilike("major", major);
 
     if (error) {
       throw error;
     }
 
     if (!data || data.length === 0) {
-      return res.status(404).send('No applications found.');
+      return res.status(404).send("No applications found.");
     }
 
     // Summarize all essays
