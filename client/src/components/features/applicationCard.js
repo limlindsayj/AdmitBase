@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  VStack
 } from "@chakra-ui/react";
 import { LucideThumbsUp } from "lucide-react";
 
@@ -35,6 +36,7 @@ function ApplicationCard({ application }) {
       setAdmitColor("var(--red-100, #FED7D7)");
       setAdmitBorder("var(--red-800, #822727)");
     }
+    console.log(application);
   }, [application.admit_status]);
 
   return (
@@ -130,19 +132,83 @@ function ApplicationCard({ application }) {
         </CardBody>
       </Card>
 
-      {/* Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{application.essay_name ?? "Essay"}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <Text whiteSpace="pre-wrap">
-              {application.essay ?? "No essay content available."}
-            </Text>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>{application.essay_name ?? "Essay"}</ModalHeader>
+    <ModalCloseButton />
+    <ModalBody pb={6}>
+      <VStack spacing={4} align="stretch">
+        <Box border="1px solid var(--Secondary-4, #718096)" borderRadius="4px" p={4}>
+          <Text whiteSpace="pre-wrap">
+            {application.essay ?? "No essay content available."}
+          </Text>
+        </Box>
+
+        <Box border="1px solid var(--Secondary-4, #718096)" borderRadius="4px" p={4}>
+          <Flex
+            width="100%"
+            justifyContent="center"
+            gap={4}
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Tag
+              variant="solid"
+              rounded="full"
+              py={1}
+              height="24px"
+              px="8px"
+              alignItems="center"
+              backgroundColor="var(--purple-100, #E9D8FD)"
+              color="var(--purple-800, #44337A)"
+              fontSize="14px"
+              fontWeight="700"
+            >
+              <strong>GPA:&nbsp;</strong> {application.student?.gpa ?? "N/A"}
+            </Tag>
+
+            <Tag
+              variant="solid"
+              rounded="full"
+              py={1}
+              height="24px"
+              px="8px"
+              alignItems="center"
+              backgroundColor={admitColor}
+              color={admitBorder}
+              fontSize="14px"
+              fontWeight="700"
+            >
+              {application.admit_status ?? "Unknown Status"}
+            </Tag>
+
+            <Tag
+              variant="solid"
+              rounded="full"
+              py={1}
+              height="24px"
+              px="8px"
+              alignItems="center"
+              backgroundColor="var(--blue-100, #BEE3F8)"
+              color="var(--blue-800, #2A4365)"
+              fontSize="14px"
+              fontWeight="700"
+            >
+              {application.major ?? "No Major"}
+            </Tag>
+          </Flex>
+        </Box>
+
+        <Box border="1px solid var(--Secondary-4, #718096)" borderRadius="4px" p={4}>
+          <Text whiteSpace="pre-wrap">
+            {application.additional_stats ?? "No additional stats."}
+          </Text>
+        </Box>
+      </VStack>
+    </ModalBody>
+  </ModalContent>
+</Modal>
     </>
   );
 }
