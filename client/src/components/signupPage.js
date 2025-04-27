@@ -85,7 +85,7 @@ function InformationForm() {
 
         console.log("Form submitted successfully:", response.data);
 
-        navigate("/inpage");
+        navigate("/login-page");
       } catch (error) {
         console.error("Error submitting form:", error);
       }
