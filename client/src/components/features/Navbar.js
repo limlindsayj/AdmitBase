@@ -4,7 +4,6 @@ import { useAuthContext } from "../../contexts/hooks/AuthContext";
 import { useNavigate, Link } from 'react-router-dom';
 import { FaCircleUser } from "react-icons/fa6";
 
-
 function Navbar() {
     const navigate = useNavigate();
     const { isLoggedIn, setIsLoggedIn } = useAuthContext();
@@ -49,8 +48,6 @@ function Navbar() {
                             <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                         </MenuList>
                     </Menu>
-                    {/* <Button onClick={handleLogout}>Log Out</Button>
-                    <FaCircleUser fontSize="30px" /> */}
                 </Box>
                 ) : (
                 <Box>

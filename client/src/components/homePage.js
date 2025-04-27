@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 import SearchDropdown from "./features/searchDropdown";
 import { useAuthContext } from "../contexts/hooks/AuthContext";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import "../index.css";
 
 function HomePage() {
