@@ -9,34 +9,38 @@ import HomePage from './components/homePage.js';
 import LoginPage from './components/loginPage.js';
 import SignupPage from './components/signupPage.js';
 import CollegePage from './components/collegePage.js';
-import SubmitProfilePage from './components/submitProfilePage.js';
+import ProtectedRoute from './components/features/ProtectedRoute.js'
+import SubmitApplicationPage from './components/submitApplicationPage.js';
+import { AuthProvider } from './contexts/hooks/AuthContext.js';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route 
-          path="/"
-          element={<HomePage />}
-        />
-        <Route
-          path="/inpage"
-          element={<LoginPage/>}
-        />
-        <Route
-          path="/signup"
-          element={<SignupPage/>}
-        />
-        <Route
-          path="/college"
-          element={<CollegePage/>}
-        />
-        <Route
-          path="/submit"
-          element={<SubmitProfilePage/>}
-        />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route 
+            path="/"
+            element={<HomePage />}
+          />
+          <Route
+            path="/login-page"
+            element={<LoginPage/>}
+          />
+          <Route
+            path="/signup-page"
+            element={<SignupPage/>}
+          />
+          <Route
+            path="/college"
+            element={<CollegePage/>}
+          />
+          <Route
+            path="/submit-application"
+            element={<ProtectedRoute element={<SubmitApplicationPage/>} />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

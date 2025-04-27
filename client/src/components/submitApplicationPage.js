@@ -13,7 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-function SubmitProfilePage() {
+function SubmitApplicationPage() {
   const [formData, setFormData] = useState({
     college: "",
     essay: "",
@@ -208,4 +208,4 @@ function SubmitProfilePage() {
   );
 }
 
-export default SubmitProfilePage;
+export default SubmitApplicationPage;
