@@ -1,28 +1,14 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import SearchDropdown from "./features/searchDropdown";
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from "../contexts/hooks/AuthContext";
 import "../index.css";
-// import { checkNavigable } from "react-slick/lib/utils/innerSliderUtils";
 
 function HomePage() {
   const [search, setSearch] = useState('');
   const [schools, setSchools] = useState([]);
-  // const { isLoggedIn, setIsLoggedIn } = useAuthContext();
   const navigate = useNavigate();
-
-  // const handleLogout = async () => {
-  //   try {
-  //     await axios.post('http://localhost:3001/login/logout', {}, { withCredentials: true });
-      
-  //     setIsLoggedIn(false);
-  //     navigate('/');
-  //   } catch (error) {
-  //     console.error('Logout error:', error);
-  //   }
-  // };
 
   useEffect(() => {
     axios.get('http://localhost:3001/school')
