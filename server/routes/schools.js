@@ -34,3 +34,24 @@ schoolRouter.get('/', async (req, res) => {
       res.status(500).send(err.message);
     }
   });
+
+  schoolRouter.get('/:name/logo', async (req, res) => {
+    try {
+      const name = req.params.name;
+      const { data, error } = await db
+        .from('school')
+        .select('logo_path')
+        .ilike('name', name)
+        .single();
+  
+      if (error) {
+        throw error;
+      }
+  
+      res.status(200).json({ logoPath: data.logo_path });
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+  
+  

@@ -10,6 +10,7 @@ function CollegePage() {
   const navigate = useNavigate();
   const school = location.state || "";
 
+  const [schoolLogo, setSchoolLogo] = useState("");
   const [schoolSearch, setSchoolSearch] = useState(school);
   const [isLoading, setIsLoading] = useState(false);
   const [applications, setApplications] = useState([]);
@@ -31,12 +32,31 @@ function CollegePage() {
   const popupRef = useRef(null);
 
   useEffect(() => {
+    const fetchSchoolLogo = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/school/${school}/logo`);
+        console.log('school logo', response.data);
+        setSchoolLogo(response.data.logoPath || "");
+      } catch (error) {
+        console.error("Failed to fetch school logo:", error);
+        setSchoolLogo("");
+      }
+    };
+  
+    if (school) {
+      fetchSchoolLogo();
+    }
+  }, [school]);
+  
+
+  useEffect(() => {
     const fetchApplicationsBySchool = async () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
           `http://localhost:3001/application/school/${school}`
         );
+        console.log('response', response);
         const data1 = response.data?.school?.application || [];
 
         const averageGpa =
@@ -352,7 +372,7 @@ function CollegePage() {
           justifyContent="center"
         >
           <Box display="flex" alignItems="center" margin="16px">
-            <Image />
+            <Image src={`/${schoolLogo}`} height="80px" marginRight="20px" />
             <Heading>{schoolSearch}</Heading>
           </Box>
           <Box display="flex" padding="5px">
