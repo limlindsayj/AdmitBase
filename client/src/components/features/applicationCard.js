@@ -5,7 +5,7 @@ import { LucideThumbsUp, MessageCircle } from 'lucide-react'; // Import icons
 function ApplicationCard({ application }) {
     const [admitColor, setAdmitColor] = useState('');
     const [admitBorder, setAdmitBorder] = useState('');
-
+    console.log(application);
     useEffect(() => {
         const fetchColorCondition = () => {  
             if (application.admit_status === "Accepted") {

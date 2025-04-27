@@ -4,6 +4,7 @@
   "main": "app.js",
   "license": "MIT",
   "dependencies": {
+    "@google/genai": "^0.10.0",
     "@supabase/supabase-js": "^2.49.4",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
