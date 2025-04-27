@@ -10,7 +10,7 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
   const inputRef = useRef(null);
 
   const filteredChoices = choices.filter((choice) =>
-    (choice ?? "").toLowerCase().includes((value ?? search).toLowerCase())
+    (choice ?? "").toLowerCase().includes((search).toLowerCase())
   );
 
   useEffect(() => {
@@ -19,12 +19,7 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
-        if (allowResetOnBlur) {
-          setSearch('');
-          if (onSearchChange) {
-            onSearchChange('');  // Reset when clicking outside
-          }
-        }
+        setSearch(''); // always clear search when clicking outside
         setIsOpen(false);
       }
     };
@@ -33,11 +28,10 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [allowResetOnBlur, onSearchChange]);
+  }, []);
 
   const handleInputChange = (e) => {
-    const newValue = e.target.value;
-    setSearch(newValue);
+    setSearch(e.target.value);
     setIsOpen(true);
   };
 
@@ -45,7 +39,7 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
     if (onSearchChange) {
       onSearchChange(choice);
     }
-    setSearch(choice);
+    setSearch(''); // clear search when a choice is selected
     setIsOpen(false);
   };
 
@@ -61,7 +55,7 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
         border={"2px solid #000"}
         borderRadius={borderRadius}
         ref={inputRef}
-        value={value ?? search}
+        value={search !== '' ? search : (value ?? '')}
         placeholder="Search..."
         focusBorderColor="black"
         onFocus={() => setIsOpen(true)}
