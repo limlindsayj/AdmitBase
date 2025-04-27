@@ -37,7 +37,7 @@ function CollegePage() {
         const response = await axios.get(
           `http://localhost:3001/application/school/${school}`
         );
-        const data1 = response.data?.school?.application || [];
+        const data1 = response.data?.applications || [];
 
         const averageGpa =
           data1.reduce((sum, item) => {

@@ -138,7 +138,7 @@ function ApplicationCard({ application }) {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <Text whiteSpace="pre-wrap">
-              {application.essay_full_text ?? "No essay content available."}
+              {application.essay ?? "No essay content available."}
             </Text>
           </ModalBody>
         </ModalContent>
