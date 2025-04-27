@@ -16,7 +16,7 @@ import Navbar from './components/features/Navbar';
 function App() {
   const location = useLocation();
 
-  const showNavbarRoutes = ["/", "/college", "/submit-application"];
+  const showNavbarRoutes = [ "/college", "/submit-application"];
   
   return (
     <>
