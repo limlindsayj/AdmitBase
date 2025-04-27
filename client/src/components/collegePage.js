@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Heading, Button, Image, Input, VStack } from "@chakra-ui/react";
+import { Box, Heading, Button, Image, Input, VStack, Text } from "@chakra-ui/react";
 import axios from "axios";
 import SearchDropdown from "./features/searchDropdown.js";
 import ApplicationCard from "./features/applicationCard.js";
@@ -152,23 +152,29 @@ function CollegePage() {
   return (
     <Box paddingLeft="40px" paddingRight="40px">
       <Box display="flex" justifyContent="space-between" marginTop="30px">
-        <Box display="flex" alignItems="center" gap="10px">
+        <Box display="flex" alignItems="center">
           <SearchDropdown
             choices={schools}
             onSearchChange={handleSchoolSearchChange}
             allowResetOnBlur={true}
+            borderRadius="4px 0px 0px 4px"
           />
           <SearchDropdown
             choices={majors}
             onSearchChange={handleMajorSearchChange}
             allowResetOnBlur={true}
             value={majorSearch}
+            borderRadius="0px"
           />
           <Box position="relative">
             <Button
               backgroundColor="black"
               color="white"
-              borderRadius="4px"
+              borderTopLeftRadius="0"
+              borderTopRightRadius="4px"
+              borderBottomLeftRadius="0"
+              borderBottomRightRadius="4px"
+
               onClick={() => setShowFilters(!showFilters)}
             >
               Filters
@@ -178,28 +184,41 @@ function CollegePage() {
               <Box
                 ref={popupRef}
                 position="absolute"
-                top="50px"
-                right="0"
-                border="1px solid #ccc"
-                borderRadius="10px"
+                top="0"
+                left="0"
+                border={"2px solid #000"}
+                borderRadius="0px 4px 4px 4px"
                 padding="20px"
                 backgroundColor="white"
                 boxShadow="lg"
                 width="400px"
                 zIndex="10"
               >
-                <VStack spacing="20px">
-                  <Input
-                    placeholder="Minimum GPA"
-                    type="number"
-                    step="0.01"
-                    value={tempGpaFilter}
-                    onChange={(e) => setTempGpaFilter(e.target.value)}
-                  />
-
-                  <Box display="flex" gap="10px">
+                <VStack alignItems={"start"}>
+                  <Text fontSize={'18px'} fontWeight={'700'} >Filter by</Text>
+                  <Box  marginTop={'15px'} marginBottom={'15px'} display={'flex'} alignItems={'center'}>
+                    <Text fontSize={'16px'} fontWeight={'400'} marginRight={'10px'}>GPA: </Text>
+                    <Input
+                      placeholder="4.0"
+                      type="number"
+                      step="0.01"
+                      width='60px'
+                      value={tempGpaFilter}
+                      onChange={(e) => setTempGpaFilter(e.target.value)}
+                    />
+                  </Box>
+                  <Text fontSize={'16px'} fontWeight={'400'} marginRight={'10px'}>Status:</Text>
+                  <Box 
+                    display="flex" 
+                    gap="10px"
+                    marginTop={'5px'}
+                    marginBottom={'10px'}
+                  >
                     <Button
-                      flex="1"
+                      width={'auto'}
+                      height={'25px'}
+                      paddingLeft={'8px'}
+                      paddingRight={'8px'}
                       variant={
                         tempStatusFilter.includes("Accepted")
                           ? "solid"
@@ -223,7 +242,10 @@ function CollegePage() {
                     </Button>
 
                     <Button
-                      flex="1"
+                      width={'auto'}
+                      height={'25px'}
+                      paddingLeft={'8px'}
+                      paddingRight={'8px'}
                       variant={
                         tempStatusFilter.includes("Waitlisted")
                           ? "solid"
@@ -247,7 +269,10 @@ function CollegePage() {
                     </Button>
 
                     <Button
-                      flex="1"
+                      width={'auto'}
+                      height={'25px'}
+                      paddingLeft={'8px'}
+                      paddingRight={'8px'}
                       variant={
                         tempStatusFilter.includes("Rejected")
                           ? "solid"
@@ -271,20 +296,26 @@ function CollegePage() {
                     </Button>
                   </Box>
 
-                  <Box display="flex" gap="10px">
+                  <Box marginTop={'10px'} width={'100%'} justifyContent={'flex-end'} display="flex" gap="10px">
                     <Button
-                      colorScheme="gray"
-                      flex="1"
+                      backgroundColor={'var(--gray-100, #EDF2F7)'}
+                      color={'black'}
+                      borderRadius={'4px'}
+                      fontWeight={'400'}
+                      width={"130px"}
                       onClick={handleClearFilters}
                     >
-                      Clear
+                      Clear Filters
                     </Button>
                     <Button
-                      colorScheme="blue"
-                      flex="1"
+                      backgroundColor={"black"}
+                      color={'white'}
+                      borderRadius={'4px'}
+                      fontWeight={'400'}
+                      width={"130px"}
                       onClick={handleApplyFilters}
                     >
-                      Apply
+                      Apply Filters
                     </Button>
                   </Box>
                 </VStack>

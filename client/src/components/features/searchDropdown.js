@@ -1,8 +1,9 @@
-import { Box, Input, VStack, Text } from "@chakra-ui/react";
+import { Box, Input, VStack, Text, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { IoSearch } from "react-icons/io5";
 
-function SearchDropdown({ choices = [], onSearchChange, value }) {
+function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur, borderRadius = "4px" }) {
   const [search, setSearch] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -44,15 +45,25 @@ function SearchDropdown({ choices = [], onSearchChange, value }) {
 
   return (
     <VStack spacing={1} align="stretch" position="relative">
+      <InputGroup>
+      <InputLeftElement
+        pointerEvents="none"
+        children={<IoSearch color="black" />}
+      />
       <Input
         width="100%"
+        border={"2px solid #000"}
+        borderRadius={borderRadius}
         ref={inputRef}
         value={search !== '' ? search : (value ?? '')}
         placeholder="Search..."
         focusBorderColor="black"
         onFocus={() => setIsOpen(true)}
         onChange={handleInputChange}
+        onB
+        lur={() => setTimeout(() => setIsOpen(false), 200)}
       />
+      </InputGroup>
 
       <AnimatePresence>
         {isOpen && (
