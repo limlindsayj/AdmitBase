@@ -110,7 +110,7 @@ function LoginPage() {
             <Box></Box>
         </VStack>
         <VStack>
-            <Image src={"/images/universities.png"}></Image>
+            <Image src={"/images/universities.png"} />
         </VStack>
       </HStack>
     )

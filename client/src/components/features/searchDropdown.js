@@ -1,6 +1,7 @@
-import { Box, Input, VStack, Text } from "@chakra-ui/react";
+import { Box, Input, InputGroup, InputLeftElement, VStack, Text } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SearchIcon } from "@chakra-ui/icons";
 
 function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false }) {
   const [search, setSearch] = useState('');
@@ -19,8 +20,8 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
         setSearch('');
-        if (allowResetOnBlur) {
-          onSearchChange("hello");
+        if (allowResetOnBlur && search.trim() === '') {
+          onSearchChange('');
         }
         setIsOpen(false);
       }
@@ -30,7 +31,7 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onSearchChange, allowResetOnBlur]);
+  }, [onSearchChange, allowResetOnBlur, search]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -45,18 +46,29 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
   };
 
   return (
-    <VStack p={4} spacing={1} align="stretch" position="relative">
-      <Input
-        width="100%"
-        ref={inputRef}
-        value={search}
-        border="1px solid #000"
-        placeholder="Search..."
-        focusBorderColor="black"
-        onFocus={() => setIsOpen(true)}
-        onChange={handleInputChange}
-        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-      />
+    <VStack spacing={1} align="stretch" position="relative">
+      <InputGroup>
+      <InputLeftElement pointerEvents="none">
+        <SearchIcon color="gray.500" />
+      </InputLeftElement>
+        <Input
+          width="100%"
+          ref={inputRef}
+          value={search}
+          border="1px solid #000"
+          borderRadius={"2px"}
+          placeholder="Search..."
+          focusBorderColor="black"
+          onFocus={() => setIsOpen(true)}
+          onChange={handleInputChange}
+          onBlur={() => {
+            if (allowResetOnBlur && search.trim() === '') {
+              onSearchChange('');
+            }
+            setTimeout(() => setIsOpen(false), 200)
+          }}
+        />
+      </InputGroup>
 
       <AnimatePresence>
         {isOpen && (
