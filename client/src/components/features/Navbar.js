@@ -37,9 +37,9 @@ function Navbar() {
                 <Heading fontStyle={"italic"} fontSize={"30px"}>Admit_Base</Heading>
             </Link>
             {isLoggedIn ? (
-                <Box display={"flex"}>
+                <Box display="flex" alignItems="center" gap="12px">
                     <Button onClick={handleLogout}>Log Out</Button>
-                    <FaCircleUser fontSize={"30px"}/>
+                    <FaCircleUser fontSize="30px" />
                 </Box>
                 ) : (
                 <Box>
