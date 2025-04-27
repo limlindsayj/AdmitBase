@@ -20,7 +20,7 @@ function SearchDropdown({ choices = [], onSearchChange, allowResetOnBlur = false
       ) {
         setSearch('');
         if (allowResetOnBlur) {
-          onSearchChange("hello"); // 👈 only reset if allowed
+          onSearchChange("hello");
         }
         setIsOpen(false);
       }
