@@ -14,7 +14,8 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { FiSend } from "react-icons/fi";
-
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function SubmitApplicationPage() {
   const [formData, setFormData] = useState({
@@ -25,11 +26,13 @@ function SubmitApplicationPage() {
     gpa: "",
     status: "",
     yearApplied: "",
-    classes: "",
     additionalInfo: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,8 +49,7 @@ function SubmitApplicationPage() {
       formData.major.trim() !== "" &&
       formData.gpa.trim() !== "" &&
       formData.status.trim() !== "" &&
-      formData.yearApplied.trim() !== "" &&
-      formData.classes.trim() !== ""
+      formData.yearApplied.trim() !== ""
     );
   };
 
@@ -56,6 +58,8 @@ function SubmitApplicationPage() {
     setSubmitted(true);
 
     if (!validateFields()) {
+      setSubmissionStatus("error");
+      setErrorMessage("Please fill out all required fields correctly.");
       return;
     }
 
@@ -63,7 +67,6 @@ function SubmitApplicationPage() {
       ...formData,
       gpa: parseFloat(formData.gpa),
       yearApplied: parseInt(formData.yearApplied),
-      classes: formData.classes.split(",").map((c) => c.trim()),
     };
 
     try {
@@ -80,25 +83,34 @@ function SubmitApplicationPage() {
 
       if (response.ok) {
         console.log("Submitted data:", data);
+        setSubmissionStatus("success");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(data.message || "An unexpected error occurred.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      setSubmissionStatus("error");
+      setErrorMessage("A network error occurred. Please try again.");
     }
   };
 
   return (
     <Box>
       <form onSubmit={handleSubmit}>
-        <VStack 
-          margin={"60px"} 
-          // backgroundColor={"green"} 
-        >
-          <FormControl isInvalid={submitted && formData.essayName.trim() === ""} width={"65%"}>
+        <VStack margin={"60px"}>
+          <FormControl
+            isInvalid={submitted && formData.essayName.trim() === ""}
+            width={"65%"}
+          >
             <Input
               type="text"
               borderRadius={"4px"}
               marginBottom={"15px"}
-              borderColor="1px solid var(--Secondary-4, #718096)" 
+              borderColor="1px solid var(--Secondary-4, #718096)"
               name="essayName"
               placeholder="Essay Title"
               value={formData.essayName}
@@ -106,14 +118,15 @@ function SubmitApplicationPage() {
             />
             <FormErrorMessage>Essay Title Required.</FormErrorMessage>
           </FormControl>
-          <FormControl 
+
+          <FormControl
             isInvalid={submitted && formData.essay.trim() === ""}
             marginTop={"15px"}
             marginBottom={"15px"}
           >
             <Textarea
               name="essay"
-              borderColor="1px solid var(--Secondary-4, #718096)" 
+              borderColor="1px solid var(--Secondary-4, #718096)"
               rows={16}
               borderRadius={"4px"}
               placeholder="Paste your essay..."
@@ -123,9 +136,9 @@ function SubmitApplicationPage() {
             <FormErrorMessage>Essay is required.</FormErrorMessage>
           </FormControl>
 
-          <Box 
-            border="1px solid" 
-            borderColor="1px solid var(--Secondary-4, #718096)" 
+          <Box
+            border="1px solid"
+            borderColor="1px solid var(--Secondary-4, #718096)"
             borderRadius="4px"
             marginTop={"15px"}
             marginBottom={"15px"}
@@ -134,10 +147,7 @@ function SubmitApplicationPage() {
             width="100%"
             height={"auto"}
           >
-            <SimpleGrid 
-              columns={5} 
-              marginBottom={"10px"}
-            >
+            <SimpleGrid columns={5} marginBottom={"10px"}>
               <Text fontWeight="bold" fontSize="sm" textAlign="center">
                 COLLEGE APPLIED TO
               </Text>
@@ -154,8 +164,11 @@ function SubmitApplicationPage() {
                 STATUS
               </Text>
             </SimpleGrid>
+
             <SimpleGrid columns={5}>
-              <FormControl isInvalid={submitted && formData.college.trim() === ""}>
+              <FormControl
+                isInvalid={submitted && formData.college.trim() === ""}
+              >
                 <Flex justifyContent={"center"}>
                   <Input
                     type="text"
@@ -172,7 +185,9 @@ function SubmitApplicationPage() {
                 <FormErrorMessage>College is required.</FormErrorMessage>
               </FormControl>
 
-              <FormControl isInvalid={submitted && formData.yearApplied.trim() === ""}>
+              <FormControl
+                isInvalid={submitted && formData.yearApplied.trim() === ""}
+              >
                 <Flex justifyContent={"center"}>
                   <Input
                     type="number"
@@ -189,7 +204,9 @@ function SubmitApplicationPage() {
                 <FormErrorMessage>Year Applied is required.</FormErrorMessage>
               </FormControl>
 
-              <FormControl isInvalid={submitted && formData.major.trim() === ""}>
+              <FormControl
+                isInvalid={submitted && formData.major.trim() === ""}
+              >
                 <Flex justifyContent={"center"}>
                   <Input
                     type="text"
@@ -224,7 +241,9 @@ function SubmitApplicationPage() {
                 <FormErrorMessage>GPA is required.</FormErrorMessage>
               </FormControl>
 
-              <FormControl isInvalid={submitted && formData.status.trim() === ""}>
+              <FormControl
+                isInvalid={submitted && formData.status.trim() === ""}
+              >
                 <Flex justifyContent={"center"}>
                   <Select
                     name="status"
@@ -236,21 +255,19 @@ function SubmitApplicationPage() {
                     onChange={handleChange}
                     placeholder="Select Status"
                   >
-                    <option value="admitted">Admitted</option>
-                    <option value="waitlisted">Waitlisted</option>
-                    <option value="rejected">Rejected</option>
+                    <option value="Admitted">Admitted</option>
+                    <option value="Waitlisted">Waitlisted</option>
+                    <option value="Rejected">Rejected</option>
                   </Select>
                 </Flex>
                 <FormErrorMessage>Status is required.</FormErrorMessage>
               </FormControl>
             </SimpleGrid>
           </Box>
-          <FormControl
-            marginTop={"15px"}
-            marginBottom={"15px"}
-          >
-            <FormLabel 
-              width={"100%"} 
+
+          <FormControl marginTop={"15px"} marginBottom={"15px"}>
+            <FormLabel
+              width={"100%"}
               textAlign={"center"}
               fontSize={"24px"}
               fontWeight={"700"}
@@ -259,29 +276,47 @@ function SubmitApplicationPage() {
             </FormLabel>
             <Textarea
               name="additionalInfo"
-              borderColor="1px solid var(--Secondary-4, #718096)" 
+              borderColor="1px solid var(--Secondary-4, #718096)"
               rows={4}
               value={formData.additionalInfo}
               onChange={handleChange}
             />
           </FormControl>
-          <Box
-            width={"100%"}
-            display={"flex"}
-            justifyContent={"flex-end"}
-          >
-            <Button 
-              type={"submit"} 
-              width={"110px"} 
+
+          <Box width={"100%"} display={"flex"} justifyContent={"flex-end"}>
+            <Button
+              type="submit"
+              width={"110px"}
               borderRadius={"4px"}
               backgroundColor={"black"}
               color={"white"}
               fontWeight={"400"}
-              >
-              <FiSend style={{ marginRight: "8px" }}/>
+            >
+              <FiSend style={{ marginRight: "8px" }} />
               Post
             </Button>
           </Box>
+
+          {submissionStatus && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              style={{ width: "100%" }}
+            >
+              <FormLabel
+                textAlign={"center"}
+                marginTop={"15px"}
+                fontSize={"16px"}
+                fontWeight={"600"}
+                color={submissionStatus === "success" ? "green.500" : "red.500"}
+              >
+                {submissionStatus === "success"
+                  ? "Form submitted successfully!"
+                  : errorMessage}
+              </FormLabel>
+            </motion.div>
+          )}
         </VStack>
       </form>
     </Box>
