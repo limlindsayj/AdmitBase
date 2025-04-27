@@ -3,11 +3,15 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoSearch } from "react-icons/io5";
 
-function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur, borderRadius = "4px" }) {
-  const [search, setSearch] = useState('');
+function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur = false, borderRadius = "4px" }) {
+  const [search, setSearch] = useState(value || '');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    setSearch(value || '');
+  }, [value]);
 
   const filteredChoices = choices.filter((choice) =>
     (choice ?? "").toLowerCase().includes((search).toLowerCase())
@@ -19,7 +23,10 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
         dropdownRef.current && !dropdownRef.current.contains(event.target) &&
         inputRef.current && !inputRef.current.contains(event.target)
       ) {
-        setSearch(''); // always clear search when clicking outside
+        if (allowResetOnBlur) {
+          if (onSearchChange) onSearchChange('');
+          setSearch('');
+        }
         setIsOpen(false);
       }
     };
@@ -28,10 +35,11 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [allowResetOnBlur, onSearchChange]);
 
   const handleInputChange = (e) => {
-    setSearch(e.target.value);
+    const newValue = e.target.value;
+    setSearch(newValue);
     setIsOpen(true);
   };
 
@@ -39,30 +47,28 @@ function SearchDropdown({ choices = [], onSearchChange, value, allowResetOnBlur,
     if (onSearchChange) {
       onSearchChange(choice);
     }
-    setSearch(''); // clear search when a choice is selected
+    setSearch(''); 
     setIsOpen(false);
   };
 
   return (
     <VStack spacing={1} align="stretch" position="relative">
       <InputGroup>
-      <InputLeftElement
-        pointerEvents="none"
-        children={<IoSearch color="black" />}
-      />
-      <Input
-        width="100%"
-        border={"2px solid #000"}
-        borderRadius={borderRadius}
-        ref={inputRef}
-        value={search !== '' ? search : (value ?? '')}
-        placeholder="Search..."
-        focusBorderColor="black"
-        onFocus={() => setIsOpen(true)}
-        onChange={handleInputChange}
-        onB
-        lur={() => setTimeout(() => setIsOpen(false), 200)}
-      />
+        <InputLeftElement
+          pointerEvents="none"
+          children={<IoSearch color="black" />}
+        />
+        <Input
+          width="100%"
+          border={"2px solid #000"}
+          borderRadius={borderRadius}
+          ref={inputRef}
+          value={search}
+          placeholder="Search..."
+          focusBorderColor="black"
+          onFocus={() => setIsOpen(true)}
+          onChange={handleInputChange}
+        />
       </InputGroup>
 
       <AnimatePresence>
