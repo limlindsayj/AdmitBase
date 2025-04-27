@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Heading, Button, Image, Input, VStack } from "@chakra-ui/react";
 import axios from "axios";
-import { Box, Heading, Button, Image } from "@chakra-ui/react";
 import SearchDropdown from "./features/searchDropdown.js";
 import ApplicationCard from "./features/applicationCard.js";
 
@@ -18,23 +18,31 @@ function CollegePage() {
   const [schools, setSchools] = useState([]);
   const [gpa, setGpa] = useState(0);
   const [schoolData, setSchoolData] = useState({});
+
   const [majorSearch, setMajorSearch] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [tempGpaFilter, setTempGpaFilter] = useState("");
+  const [tempStatusFilter, setTempStatusFilter] = useState([]);
+
+  const [appliedGpaFilter, setAppliedGpaFilter] = useState("");
+  const [appliedStatusFilter, setAppliedStatusFilter] = useState([]);
+
+  const popupRef = useRef(null);
 
   useEffect(() => {
     const fetchApplicationsBySchool = async () => {
       setIsLoading(true);
       try {
-        const schoolToFetch = schoolSearch;
         const response = await axios.get(
-          `http://localhost:3001/application/school/${schoolToFetch}`
+          `http://localhost:3001/application/school/${school}`
         );
-
-        const data1 = response.data?.applications || [];
+        const data1 = response.data?.school?.application || [];
 
         const averageGpa =
           data1.reduce((sum, item) => {
-            const gpa = item.student?.gpa;
-            return sum + (gpa ? gpa : 0);
+            const studentGpa = item.student?.gpa;
+            return sum + (studentGpa ? studentGpa : 0);
           }, 0) / (data1.filter((item) => item.student?.gpa).length || 1);
 
         setGpa(averageGpa);
@@ -44,65 +52,107 @@ function CollegePage() {
         const majorOptions = [...new Set(data1.map((app) => app.major))];
         setMajors(majorOptions);
 
-        const data2 = await axios.get(
-          `http://localhost:3001/school/${schoolToFetch}`
+        const schoolMeta = await axios.get(
+          `http://localhost:3001/school/${school}`
         );
-        setSchoolData(data2.data[0]);
+        setSchoolData(schoolMeta.data[0] || {});
       } catch (error) {
-        console.error("Failed to fetch school applications:", error);
+        console.error("Failed to fetch:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (schoolSearch) {
+    if (school) {
       fetchApplicationsBySchool();
     }
-  }, [schoolSearch]);
+  }, [school]);
 
   useEffect(() => {
     axios
       .get("http://localhost:3001/school")
-      .then((response) => {
-        setSchools(response.data.map((university) => university.name));
+      .then((res) => {
+        setSchools(res.data.map((uni) => uni.name));
       })
-      .catch((error) => {
-        console.error("API call error:", error);
-      });
+      .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
-    const trimmed = majorSearch.trim();
+    let filtered = applications;
 
-    if (!trimmed) {
-      setFilteredApplications(applications);
-      return;
+    if (majorSearch.trim()) {
+      filtered = filtered.filter(
+        (app) => (app.major ?? "").toLowerCase() === majorSearch.toLowerCase()
+      );
     }
 
-    const filtered = applications.filter(
-      (app) => (app.major ?? "").toLowerCase() === majorSearch.toLowerCase()
-    );
+    if (appliedGpaFilter) {
+      filtered = filtered.filter(
+        (app) =>
+          app.student?.gpa && app.student.gpa >= parseFloat(appliedGpaFilter)
+      );
+    }
+
+    if (appliedStatusFilter.length > 0) {
+      filtered = filtered.filter((app) =>
+        appliedStatusFilter.includes(app.admit_status)
+      );
+    }
 
     setFilteredApplications(filtered);
-  }, [majorSearch, applications]);
+  }, [applications, majorSearch, appliedGpaFilter, appliedStatusFilter]);
 
-  const handleSchoolSearchChange = (newSearch) => {
-    setSchoolSearch(newSearch);
-    navigate("/college", { state: newSearch });
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowFilters(false);
+      }
+    };
+
+    if (showFilters) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilters]);
+
+  const handleSchoolSearchChange = (newSchool) => {
+    setSchoolSearch(newSchool);
+    navigate("/college", { state: newSchool });
   };
 
-  const handleMajorSearchChange = (newSearch) => {
-    setMajorSearch(newSearch);
+  const handleMajorSearchChange = (newMajor) => {
+    setMajorSearch(newMajor);
+  };
+
+  const toggleTempStatus = (status) => {
+    setTempStatusFilter((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedGpaFilter(tempGpaFilter);
+    setAppliedStatusFilter(tempStatusFilter);
+    setShowFilters(false);
+  };
+
+  const handleClearFilters = () => {
+    setTempGpaFilter("");
+    setTempStatusFilter([]);
+    setAppliedGpaFilter("");
+    setAppliedStatusFilter([]);
+    setMajorSearch("");
+    setShowFilters(false);
   };
 
   return (
-    <Box
-      // backgroundColor={"blue"}
-      paddingLeft={"40px"}
-      paddingRight={"40px"}
-    >
-      <Box display={"flex"} justifyContent={"space-between"} marginTop={"30px"}>
-        <Box display={"flex"}>
+    <Box paddingLeft="40px" paddingRight="40px">
+      <Box display="flex" justifyContent="space-between" marginTop="30px">
+        <Box display="flex" alignItems="center" gap="10px">
           <SearchDropdown
             choices={schools}
             onSearchChange={handleSchoolSearchChange}
@@ -112,19 +162,147 @@ function CollegePage() {
             choices={majors}
             onSearchChange={handleMajorSearchChange}
             allowResetOnBlur={true}
+            value={majorSearch}
           />
+          <Box position="relative">
+            <Button
+              backgroundColor="black"
+              color="white"
+              borderRadius="4px"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              Filters
+            </Button>
+
+            {showFilters && (
+              <Box
+                ref={popupRef}
+                position="absolute"
+                top="50px"
+                right="0"
+                border="1px solid #ccc"
+                borderRadius="10px"
+                padding="20px"
+                backgroundColor="white"
+                boxShadow="lg"
+                width="400px"
+                zIndex="10"
+              >
+                <VStack spacing="20px">
+                  <Input
+                    placeholder="Minimum GPA"
+                    type="number"
+                    step="0.01"
+                    value={tempGpaFilter}
+                    onChange={(e) => setTempGpaFilter(e.target.value)}
+                  />
+
+                  <Box display="flex" gap="10px">
+                    <Button
+                      flex="1"
+                      variant={
+                        tempStatusFilter.includes("Accepted")
+                          ? "solid"
+                          : "outline"
+                      }
+                      backgroundColor={
+                        tempStatusFilter.includes("Accepted")
+                          ? "var(--green-100, #C6F6D5)"
+                          : "white"
+                      }
+                      color={
+                        tempStatusFilter.includes("Accepted")
+                          ? "var(--green-800, #22543D)"
+                          : "green.400"
+                      }
+                      borderColor="green.400"
+                      onClick={() => toggleTempStatus("Accepted")}
+                      _hover={{ backgroundColor: "var(--green-100, #C6F6D5)" }}
+                    >
+                      Accepted
+                    </Button>
+
+                    <Button
+                      flex="1"
+                      variant={
+                        tempStatusFilter.includes("Waitlisted")
+                          ? "solid"
+                          : "outline"
+                      }
+                      backgroundColor={
+                        tempStatusFilter.includes("Waitlisted")
+                          ? "var(--orange-100, #FEEBCB)"
+                          : "white"
+                      }
+                      color={
+                        tempStatusFilter.includes("Waitlisted")
+                          ? "var(--orange-800, #7B341E)"
+                          : "orange.400"
+                      }
+                      borderColor="orange.400"
+                      onClick={() => toggleTempStatus("Waitlisted")}
+                      _hover={{ backgroundColor: "var(--orange-100, #FEEBCB)" }}
+                    >
+                      Waitlisted
+                    </Button>
+
+                    <Button
+                      flex="1"
+                      variant={
+                        tempStatusFilter.includes("Rejected")
+                          ? "solid"
+                          : "outline"
+                      }
+                      backgroundColor={
+                        tempStatusFilter.includes("Rejected")
+                          ? "var(--red-100, #FED7D7)"
+                          : "white"
+                      }
+                      color={
+                        tempStatusFilter.includes("Rejected")
+                          ? "var(--red-800, #822727)"
+                          : "red.400"
+                      }
+                      borderColor="red.400"
+                      onClick={() => toggleTempStatus("Rejected")}
+                      _hover={{ backgroundColor: "var(--red-100, #FED7D7)" }}
+                    >
+                      Rejected
+                    </Button>
+                  </Box>
+
+                  <Box display="flex" gap="10px">
+                    <Button
+                      colorScheme="gray"
+                      flex="1"
+                      onClick={handleClearFilters}
+                    >
+                      Clear
+                    </Button>
+                    <Button
+                      colorScheme="blue"
+                      flex="1"
+                      onClick={handleApplyFilters}
+                    >
+                      Apply
+                    </Button>
+                  </Box>
+                </VStack>
+              </Box>
+            )}
+          </Box>
         </Box>
+
         <Button
-          backgroundColor={"black"}
-          color={"white"}
-          borderRadius={"4px"}
-          onClick={() => {
-            navigate("/submit-application");
-          }}
+          backgroundColor="black"
+          color="white"
+          borderRadius="4px"
+          onClick={() => navigate("/submit-application")}
         >
           + Add Stats
         </Button>
       </Box>
+
       <Box
         maxWidth="100%"
         height="auto"
@@ -133,68 +311,60 @@ function CollegePage() {
         border="1px solid"
         borderColor="gray.600"
         backgroundColor="#FFF"
-        marginTop={"30px"}
+        marginTop="30px"
       >
         <Box
           width="100%"
-          // backgroundColor={"blue"}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
-          justifyContent={"center"}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
         >
-          <Box
-            // backgroundColor={"red"}
-            display={"flex"}
-            alignItems={"center"}
-            margin={"16px"}
-          >
+          <Box display="flex" alignItems="center" margin="16px">
             <Image />
             <Heading>{schoolSearch}</Heading>
           </Box>
-          <Box
-            // backgroundColor={"green"}
-            display={"flex"}
-            padding={"5px"}
-          >
+          <Box display="flex" padding="5px">
             <Heading
-              fontSize={"24px"}
-              color={"rgba(0, 0, 0, 0.53)"}
-              marginLeft={"20px"}
-              marginRight={"20px"}
+              fontSize="24px"
+              color="rgba(0, 0, 0, 0.53)"
+              marginLeft="20px"
+              marginRight="20px"
             >
-              Acceptance Rate: {schoolData.acceptance_rate * 100}%
+              Acceptance Rate:{" "}
+              {schoolData.acceptance_rate
+                ? (schoolData.acceptance_rate * 100).toFixed(2)
+                : "N/A"}
+              %
             </Heading>
-            {/* <Heading align="center">
-              {schoolData.city}
-            </Heading> */}
             <Heading
-              fontSize={"24px"}
-              color={"rgba(0, 0, 0, 0.53)"}
-              marginLeft={"20px"}
-              marginRight={"20px"}
+              fontSize="24px"
+              color="rgba(0, 0, 0, 0.53)"
+              marginLeft="20px"
+              marginRight="20px"
             >
               Avg. GPA: {gpa.toFixed(2)}
             </Heading>
           </Box>
         </Box>
+
         {isLoading ? (
           <div>Loading...</div>
-        ) : applications.length === 0 ? (
+        ) : filteredApplications.length === 0 ? (
           <Box
-            margin={"30px"}
-            minHeight={"300px"}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
+            margin="30px"
+            minHeight="300px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
           >
-            <Heading fontWeight={"200"} fontSize={"20px"}>
-              NO APPLICATIONS FOUND.
+            <Heading fontWeight="200" fontSize="20px">
+              NO APPLICATIONS FOUND
             </Heading>
           </Box>
         ) : (
-          filteredApplications.map((application, index) => (
-            <ApplicationCard key={index} application={application} />
+          filteredApplications.map((application, idx) => (
+            <ApplicationCard key={idx} application={application} />
           ))
         )}
       </Box>
